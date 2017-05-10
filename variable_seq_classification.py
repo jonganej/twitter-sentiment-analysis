@@ -47,7 +47,7 @@ class VariableSequenceClassification:
 
     @lazy_property
     def length(self):
-        used = tf.sign(tf.reduce_max(tf.abs(self.data), reduction_indices=2))
+        used = tf.sign(self.data)
         length = tf.reduce_sum(used, reduction_indices=1)
         length = tf.cast(length, tf.int32)
         return length
@@ -130,6 +130,7 @@ if __name__ == '__main__':
     config_filename = sys.argv[1]
     with open(config_filename, 'r') as f:
         hyperparams = yaml.load(f)
+        print ("Loaded config file from %s" % config_filename)
 
     batch_size = hyperparams['batch_size']
     n_epoch = hyperparams['n_epoch']
@@ -142,10 +143,10 @@ if __name__ == '__main__':
 
     save_every = hyperparams['save_every']
 
-    data_loader = tweetsloader.TweetsDataLoader('/home/ganenjij/my_scratch/UTD-MHAD-dataset-padded/', batch_size)
+    data_loader = tweetsloader.TweetsDataLoader('/home/ganenjij/repositories/twitter-sentiment-analysis/data/oldBrexitSentimentComparison.csv', batch_size)
     n_steps, n_inputs, n_classes = data_loader.sequence_length, 1, 2
 
-    data = tf.placeholder(tf.float32, [None, n_steps, n_inputs])
+    data = tf.placeholder(tf.float32, [None, n_steps])
     target = tf.placeholder(tf.float32, [None, n_classes])
     model = VariableSequenceClassification(data, target, hyperparams)
 
